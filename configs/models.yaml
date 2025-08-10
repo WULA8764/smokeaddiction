@@ -1,0 +1,111 @@
+# 机器学习模型配置文件 - 定义分类模型和评估参数
+
+# 分类器配置
+classifiers:
+  # 支持向量机 (SVM)
+  svm:
+    # 模型参数
+    C: [0.1, 1.0, 10.0, 100.0]        # 正则化参数
+    kernel: ["rbf", "linear", "poly"]  # 核函数类型
+    gamma: ["scale", "auto", 0.001, 0.01, 0.1]  # 核函数系数
+    class_weight: ["balanced", None]   # 类别权重
+    
+    # 训练参数
+    max_iter: 1000                     # 最大迭代次数
+    random_state: 42                   # 随机种子
+    
+  # 随机森林 (Random Forest)
+  random_forest:
+    # 模型参数
+    n_estimators: [50, 100, 200, 300]  # 决策树数量
+    max_depth: [3, 5, 7, 10, None]     # 最大深度
+    min_samples_split: [2, 5, 10]      # 分裂所需最小样本数
+    min_samples_leaf: [1, 2, 4]        # 叶节点最小样本数
+    max_features: ["sqrt", "log2", None]  # 特征选择方法
+    
+    # 训练参数
+    random_state: 42                   # 随机种子
+    n_jobs: -1                         # 并行作业数
+    
+  # K近邻 (K-Nearest Neighbors)
+  knn:
+    # 模型参数
+    n_neighbors: [3, 5, 7, 9, 11]      # 邻居数量
+    weights: ["uniform", "distance"]   # 权重计算方式
+    algorithm: ["auto", "ball_tree", "kd_tree"]  # 算法类型
+    leaf_size: [10, 20, 30, 50]        # 叶节点大小
+    p: [1, 2]                          # 距离度量（1=曼哈顿，2=欧几里得）
+    
+  # 逻辑回归 (Logistic Regression)
+  logistic_regression:
+    # 模型参数
+    C: [0.01, 0.1, 1.0, 10.0, 100.0]  # 正则化强度
+    penalty: ["l1", "l2", "elasticnet"]  # 正则化类型
+    solver: ["liblinear", "saga"]      # 优化算法
+    class_weight: ["balanced", None]   # 类别权重
+    
+    # 训练参数
+    max_iter: 1000                     # 最大迭代次数
+    random_state: 42                   # 随机种子
+
+# 模型评估设置
+evaluation:
+  # 交叉验证设置
+  cv:
+    method: "StratifiedKFold"          # 交叉验证方法
+    n_splits: 5                        # 折数
+    shuffle: true                      # 是否打乱数据
+    random_state: 42                   # 随机种子
+    
+  # 评估指标
+  metrics:
+    - "accuracy"                       # 准确率
+    - "precision"                      # 精确率
+    - "recall"                         # 召回率
+    - "f1"                            # F1分数
+    - "roc_auc"                       # ROC曲线下面积
+    - "balanced_accuracy"             # 平衡准确率
+    
+  # 特征重要性分析
+  feature_importance:
+    method: "permutation"              # 特征重要性计算方法
+    n_repeats: 10                     # 重复次数
+    random_state: 42                  # 随机种子
+    
+  # 模型解释
+  interpretation:
+    shap: true                        # 是否使用SHAP解释
+    lime: true                        # 是否使用LIME解释
+    permutation_importance: true      # 是否计算排列重要性
+
+# 超参数优化设置
+hyperparameter_optimization:
+  # 网格搜索设置
+  grid_search:
+    cv: 5                             # 交叉验证折数
+    scoring: "f1"                     # 评分指标
+    n_jobs: -1                        # 并行作业数
+    verbose: 1                        # 详细程度
+    
+  # 随机搜索设置
+  random_search:
+    n_iter: 100                       # 迭代次数
+    cv: 5                             # 交叉验证折数
+    scoring: "f1"                     # 评分指标
+    n_jobs: -1                        # 并行作业数
+    random_state: 42                  # 随机种子
+
+# 模型保存设置
+model_persistence:
+  # 保存格式
+  format: "joblib"                    # 保存格式：'joblib', 'pickle'
+  compression: 3                      # 压缩级别（0-9）
+  
+  # 保存内容
+  save_preprocessor: true             # 是否保存预处理器
+  save_feature_names: true            # 是否保存特征名称
+  save_metadata: true                 # 是否保存元数据
+  
+  # 文件命名
+  naming_pattern: "{model_name}_{timestamp}"  # 文件命名模式
+

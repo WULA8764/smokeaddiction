@@ -1,0 +1,123 @@
+# 数据配置文件 - 定义数据路径、格式和任务设置
+
+# 数据目录设置
+raw_data_dir: "data/raw"           # 原始EEG数据目录
+processed_data_dir: "data/processed"  # 预处理后数据存储目录
+features_dir: "data/features"      # 特征数据存储目录
+questionnaire_dir: "data/questionnaires"  # 问卷数据目录
+
+# 支持的数据格式
+supported_formats:
+  - ".cnt"    # Neuroscan格式
+  - ".set"    # EEGLAB格式
+  - ".fdt"    # EEGLAB数据文件
+  - ".cdt"    # Curry8格式
+  - ".dpa"    # Curry8数据文件
+  - ".raw"    # EGI格式
+
+# 事件代码定义 - 用于标记不同任务阶段
+event_codes:
+  resting_state: 1        # 静息态标记
+  visual_cue: 2           # 视觉线索标记
+  odor_task: 3            # 嗅闻任务标记
+  baseline: 0             # 基线标记
+
+# 任务配置 - 定义不同实验任务的时间设置
+tasks:
+  # 静息态任务配置
+  resting_state:
+    duration: 300          # 任务持续时间（秒）
+    events: [1]            # 相关事件代码
+    description: "闭眼静息态记录"
+    
+  # 视觉线索任务配置
+  visual_cue_task:
+    duration: 600          # 任务持续时间（秒）
+    events: [2]            # 相关事件代码
+    description: "吸烟相关视觉线索任务"
+    cue_duration: 2.0      # 线索呈现时间（秒）
+    inter_trial_interval: 3.0  # 试次间隔时间（秒）
+    
+  # 嗅闻任务配置
+  odor_task:
+    duration: 450          # 任务持续时间（秒）
+    events: [3]            # 相关事件代码
+    description: "吸烟相关气味刺激任务"
+    odor_duration: 1.5     # 气味刺激时间（秒）
+    inter_trial_interval: 4.0  # 试次间隔时间（秒）
+
+# 问卷配置 - 定义量表结构和评分规则
+questionnaires:
+  # FTND (Fagerström Test for Nicotine Dependence) 尼古丁依赖测试
+  FTND:
+    schema:
+      - name: "time_to_first_cigarette"
+        type: "categorical"
+        options: [1, 2, 3, 4]  # 选项对应的分数
+        question: "起床后多久抽第一支烟？"
+      - name: "difficulty_not_smoking"
+        type: "categorical"
+        options: [1, 2, 3, 4]
+        question: "在禁烟场所不吸烟的困难程度？"
+      - name: "most_hated_cigarette"
+        type: "categorical"
+        options: [1, 2, 3, 4]
+        question: "最不愿意放弃哪支烟？"
+      - name: "cigarettes_per_day"
+        type: "categorical"
+        options: [1, 2, 3, 4]
+        question: "每天吸烟支数？"
+      - name: "morning_smoking"
+        type: "categorical"
+        options: [1, 2, 3, 4]
+        question: "早晨吸烟是否更频繁？"
+      - name: "sick_smoking"
+        type: "categorical"
+        options: [1, 2, 3, 4]
+        question: "生病时是否仍吸烟？"
+    scoring:
+      total_range: [0, 10]     # 总分范围
+      addiction_levels:        # 依赖程度分级
+        low: [0, 3]
+        moderate: [4, 6]
+        high: [7, 10]
+        
+  # BIS-11 (Barratt Impulsiveness Scale) 冲动性量表
+  BIS_11:
+    schema:
+      - name: "attention_impulsiveness"
+        type: "likert"
+        range: [1, 4]          # 李克特量表范围
+        questions: 8           # 题目数量
+        description: "注意力冲动性"
+      - name: "motor_impulsiveness"
+        type: "likert"
+        range: [1, 4]
+        questions: 11
+        description: "运动冲动性"
+      - name: "non_planning_impulsiveness"
+        type: "likert"
+        range: [1, 4]
+        questions: 11
+        description: "非计划冲动性"
+    scoring:
+      total_range: [30, 120]   # 总分范围
+      subscale_ranges:         # 子量表范围
+        attention: [8, 32]
+        motor: [11, 44]
+        non_planning: [11, 44]
+
+# 数据质量阈值设置
+quality_thresholds:
+  # 信号质量阈值
+  signal_quality:
+    min_snr: 10.0              # 最小信噪比
+    max_artifact_ratio: 0.3    # 最大伪迹比例
+    min_trial_count: 20        # 最小试次数
+    
+  # 数据完整性阈值
+  data_completeness:
+    min_subjects: 10           # 最少被试数量
+    min_tasks_per_subject: 2   # 每个被试最少任务数
+    min_questionnaire_completion: 0.8  # 问卷完成率阈值
+

@@ -1,0 +1,185 @@
+[build-system]
+# 构建系统配置 - 指定使用setuptools作为构建后端
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# 项目基本信息
+name = "eeg-smoking-addiction"
+version = "0.1.0"
+description = "基于EEG的吸烟成瘾评估系统 - 整合静息态、视觉线索、嗅闻任务数据"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "EEG Research Team", email = "research@example.com"}
+]
+maintainers = [
+    {name = "EEG Research Team", email = "research@example.com"}
+]
+keywords = ["eeg", "machine-learning", "neuroscience", "addiction", "smoking"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+# 项目依赖 - 核心功能所需的Python包
+dependencies = [
+    # 脑电数据处理核心库
+    "mne>=1.5.0",                    # MNE-Python: 脑电数据处理和分析
+    "mne-bids>=0.12",                # MNE-BIDS: BIDS格式数据支持
+    "eeglabio>=0.1.0",               # EEGLAB格式支持
+    
+    # 科学计算和数值处理
+    "numpy>=1.21.0",                 # 数值计算基础库
+    "scipy>=1.7.0",                  # 科学计算库
+    "pandas>=1.3.0",                 # 数据处理和分析
+    "scikit-learn>=1.0.0",           # 机器学习库
+    
+    # 信号处理和特征提取
+    "pywt>=1.4.0",                   # 小波变换
+    "spectral>=0.22.0",              # 频谱分析
+    "antropy>=0.1.4",                # 熵计算
+    
+    # 可视化和报告
+    "matplotlib>=3.5.0",             # 基础绘图库
+    "seaborn>=0.11.0",               # 统计可视化
+    "plotly>=5.0.0",                 # 交互式可视化
+    "dash>=2.0.0",                   # Web应用框架
+    "dash-bootstrap-components>=1.0", # Bootstrap组件
+    
+    # 配置和实验管理
+    "hydra-core>=1.2.0",             # 配置管理
+    "omegaconf>=2.2.0",              # 配置对象
+    
+    # 数据存储和序列化
+    "h5py>=3.6.0",                   # HDF5文件支持
+    "joblib>=1.1.0",                 # 并行计算和模型保存
+    "pickle5>=0.0.11",               # 对象序列化
+    
+    # 其他工具
+    "tqdm>=4.62.0",                  # 进度条
+    "rich>=12.0.0",                  # 终端美化
+    "click>=8.0.0",                  # 命令行接口
+]
+
+# 开发依赖 - 代码质量、测试和开发工具
+[project.optional-dependencies]
+dev = [
+    # 代码质量检查
+    "ruff>=0.0.270",                 # 快速Python代码检查器
+    "mypy>=0.991",                   # 类型检查
+    "black>=22.0.0",                 # 代码格式化
+    "isort>=5.10.0",                 # import排序
+    
+    # 测试框架
+    "pytest>=7.0.0",                 # 测试框架
+    "pytest-cov>=4.0.0",             # 测试覆盖率
+    "pytest-mock>=3.8.0",            # 测试mock
+    
+    # 预提交钩子
+    "pre-commit>=2.20.0",            # Git预提交钩子
+    
+    # 文档生成
+    "sphinx>=5.0.0",                 # 文档生成器
+    "sphinx-rtd-theme>=1.0.0",       # ReadTheDocs主题
+    
+    # 性能分析
+    "memory-profiler>=0.60.0",       # 内存使用分析
+    "line-profiler>=3.5.0",          # 逐行性能分析
+]
+
+# 项目入口点 - 定义可执行命令
+[project.scripts]
+eeg-smoking = "src.main:main"
+
+# 工具配置
+[tool.ruff]
+# Ruff代码检查器配置
+target-version = "py38"
+line-length = 88
+select = [
+    "E",   # pycodestyle错误
+    "W",   # pycodestyle警告
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # 行长度限制
+    "B008",  # 函数调用中的函数定义
+    "C901",  # 函数复杂度
+]
+
+[tool.ruff.per-file-ignores]
+# 特定文件的忽略规则
+"__init__.py" = ["F401"]
+"tests/*" = ["B011"]
+
+[tool.mypy]
+# MyPy类型检查配置
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+# Pytest测试配置
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short",
+]
+markers = [
+    "slow: 标记为慢速测试",
+    "integration: 标记为集成测试",
+    "unit: 标记为单元测试",
+]
+
+[tool.coverage.run]
+# 测试覆盖率配置
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+# 覆盖率报告配置
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+

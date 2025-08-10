@@ -1,0 +1,67 @@
+# 预处理配置文件 - 定义EEG数据预处理参数
+
+# 滤波设置
+filter:
+  # 带通滤波参数
+  l_freq: 0.1              # 低频截止频率（Hz）
+  h_freq: 40.0             # 高频截止频率（Hz）
+  method: "fir"            # 滤波方法：'fir', 'iir'
+  fir_design: "firwin"     # FIR滤波器设计方法
+  phase: "zero"            # 相位类型：'zero', 'minimum'
+  
+  # 陷波滤波（去除工频干扰）
+  notch_freq: 50.0         # 陷波频率（Hz），中国为50Hz
+  notch_width: 2.0         # 陷波带宽（Hz）
+  notch_quality: 30.0      # 陷波滤波器品质因数
+
+# ICA（独立成分分析）设置
+ica:
+  # ICA算法参数
+  method: "fastica"        # ICA算法：'fastica', 'infomax', 'picard'
+  max_iter: 200            # 最大迭代次数
+  random_state: 42         # 随机种子
+  
+  # 成分选择参数
+  n_components: 0.99       # 保留成分数量（0.99表示保留99%的方差）
+  reject_by_annotation: true  # 是否基于注释拒绝试次
+  
+  # 伪迹检测阈值
+  eog_threshold: 3.0       # 眼动伪迹检测阈值
+  ecg_threshold: 3.0       # 心电伪迹检测阈值
+  blink_threshold: 3.0     # 眨眼伪迹检测阈值
+
+# 伪迹拒绝设置
+artifact_rejection:
+  # 振幅阈值
+  reject:                  # 试次拒绝阈值（微伏）
+    grad: 4000e-12         # 梯度计
+    mag: 4e-12             # 磁力计
+    eeg: 100e-6            # 脑电
+    eog: 250e-6            # 眼电
+    
+  # 平线检测
+  flat:                    # 平线检测阈值
+    grad: 1e-13
+    mag: 1e-15
+    eeg: 1e-6
+    eog: 1e-6
+    
+  # 试次长度设置
+  min_duration: 0.5        # 最小试次长度（秒）
+  max_duration: 10.0       # 最大试次长度（秒）
+
+# 分段设置
+epoching:
+  # 时间窗口设置
+  tmin: -0.2               # 事件前时间（秒）
+  tmax: 1.0                # 事件后时间（秒）
+  baseline: [-0.2, 0]      # 基线校正时间窗口
+  
+  # 试次选择
+  preload: true            # 是否预加载数据
+  verbose: true            # 是否显示详细信息
+  
+  # 事件相关设置
+  event_repeated: "error"  # 重复事件处理：'error', 'drop', 'merge'
+  on_missing: "warn"       # 缺失事件处理：'error', 'warn', 'ignore'
+

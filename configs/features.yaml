@@ -1,0 +1,127 @@
+# 特征提取配置文件 - 定义各种EEG特征提取参数
+
+# 频谱特征设置
+spectral:
+  # 频带定义
+  bands:
+    delta: [0.5, 4.0]      # δ波段：0.5-4 Hz
+    theta: [4.0, 8.0]      # θ波段：4-8 Hz
+    alpha: [8.0, 13.0]     # α波段：8-13 Hz
+    beta: [13.0, 30.0]     # β波段：13-30 Hz
+    gamma: [30.0, 45.0]    # γ波段：30-45 Hz
+    
+  # 功率谱密度计算参数
+  method: "welch"          # 功率谱估计方法：'welch', 'multitaper', 'fft'
+  window_length: 2.0       # 窗口长度（秒）
+  overlap: 0.5             # 窗口重叠比例
+  fmin: 0.5                # 最小频率（Hz）
+  fmax: 45.0               # 最大频率（Hz）
+  n_fft: 1024              # FFT点数
+  
+  # 特征类型
+  features:
+    - "band_power"         # 频带功率
+    - "relative_power"     # 相对功率
+    - "power_ratio"        # 功率比值
+    - "peak_frequency"     # 峰值频率
+    - "spectral_edge"      # 频谱边缘频率
+    - "spectral_entropy"   # 频谱熵
+
+# ERP（事件相关电位）特征设置
+erp:
+  # 时间窗口设置
+  time_windows:
+    N1: [0.08, 0.12]       # N1成分时间窗口（秒）
+    P2: [0.15, 0.25]       # P2成分时间窗口（秒）
+    LPP: [0.4, 0.8]        # LPP成分时间窗口（秒）
+    
+  # 电极选择
+  electrodes:
+    - "Fz"                 # 额中央
+    - "Cz"                 # 中央
+    - "Pz"                 # 顶中央
+    - "Oz"                 # 枕中央
+    
+  # 特征类型
+  features:
+    - "amplitude"          # 振幅
+    - "latency"            # 潜伏期
+    - "mean_amplitude"     # 平均振幅
+    - "peak_to_peak"       # 峰峰值
+    - "area"               # 面积
+    - "standard_deviation" # 标准差
+    - "inter_trial_variability"  # 试次间变异性
+
+# 微状态特征设置
+microstates:
+  # 微状态分析参数
+  n_states: 4              # 微状态数量
+  algorithm: "kmeans"      # 聚类算法：'kmeans', 'hmm'
+  max_iter: 1000           # 最大迭代次数
+  random_state: 42         # 随机种子
+  
+  # 时间参数
+  window_length: 0.01      # 时间窗口长度（秒）
+  step_size: 0.005         # 步长（秒）
+  
+  # 特征类型
+  features:
+    - "duration"           # 持续时间
+    - "coverage"           # 覆盖率
+    - "occurrence"         # 出现频率
+    - "transition_matrix"  # 转移矩阵
+    - "gfp"                # 全局场功率
+    - "topographic"        # 地形图特征
+
+# 功能连接特征设置
+connectivity:
+  # 频带设置
+  bands:
+    delta: [0.5, 4.0]      # δ波段
+    theta: [4.0, 8.0]      # θ波段
+    alpha: [8.0, 13.0]     # α波段
+    beta: [13.0, 30.0]     # β波段
+    gamma: [30.0, 45.0]    # γ波段
+    
+  # 连接性度量
+  methods:
+    - "plv"                # 相位锁定值
+    - "correlation"        # 相关性
+    - "coherence"          # 相干性
+    - "mutual_information" # 互信息
+    
+  # 网络分析参数
+  network:
+    threshold: 0.5         # 连接阈值
+    min_degree: 2          # 最小度数
+    max_degree: 10         # 最大度数
+    
+  # 特征类型
+  features:
+    - "connectivity_matrix"  # 连接矩阵
+    - "clustering_coefficient"  # 聚类系数
+    - "shortest_path"      # 最短路径
+    - "centrality"         # 中心性
+    - "global_efficiency"  # 全局效率
+    - "local_efficiency"   # 局部效率
+
+# 特征融合设置
+fusion:
+  # 预处理参数
+  preprocessing:
+    handle_missing: "impute"  # 缺失值处理：'impute', 'drop'
+    scaling: "standard"       # 标准化方法：'standard', 'minmax', 'robust'
+    feature_selection: true   # 是否进行特征选择
+    
+  # 降维设置
+  dimensionality_reduction:
+    method: "pca"          # 降维方法：'pca', 'ica', 'umap'
+    n_components: 0.95     # 保留成分比例
+    random_state: 42       # 随机种子
+    
+  # 特征选择设置
+  feature_selection:
+    method: "mutual_info"  # 特征选择方法：'mutual_info', 'f_classif', 'chi2'
+    k_best: 100            # 选择特征数量
+    threshold: 0.01        # 选择阈值
+
